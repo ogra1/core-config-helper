@@ -1,0 +1,31 @@
+name: core-config-helper
+base: core24
+version: '0.1'
+summary: A helper snap to set defaults on core systems
+description: |
+  A helper snap to ship adjustable default interface connections and default
+  configuration for an Ubuntu Core system.
+
+  This snap utilizes the snapd REST API through the snapd-control interface which
+  means it requires an IoT App Store
+
+grade: stable
+confinement: strict
+
+apps:
+  snap:
+    command: bin/set-defaults.sh
+    daemon: oneshot
+    plugs:
+      - snapd-control
+      - network
+      - network-bind
+parts:
+  rest-api:
+    plugin: python
+    source: .
+    python-packages:
+      - snap-http
+  scripts:
+    plugin: dump
+    source: scripts

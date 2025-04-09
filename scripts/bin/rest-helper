@@ -1,0 +1,40 @@
+#! /usr/bin/env python3
+
+import snap_http
+import os,sys
+from pprint import pprint
+
+if len(sys.argv) >= 2:
+    # the list command lists all snaps installed
+    if sys.argv[1] == 'list':
+      response = snap_http.list()
+      for snap in response.result:
+        print(snap["name"])
+    # return all connections for a given snap as json
+    if sys.argv[1] == 'connections':
+      if len(sys.argv) >= 3:
+        response = snap_http.get_connections(sys.argv[2])
+        pprint(response.result)
+      else:
+        print('need a snap name to list connections !')
+    # connect an interface (use "snapd" or "system" as target snap for system
+    # slots like home, opengl etc)
+    if sys.argv[1] == 'connect':
+      if len(sys.argv) >= 6:
+        response = snap_http.connect_interface(sys.argv[4],sys.argv[5],sys.argv[2],sys.argv[3])
+        if response.result:
+            print(response.result)
+      else:
+        print('usage: connect <snap> <plug> <snap> <slot>')
+    # set a config option for a snap
+    if sys.argv[1] == 'set':
+      if len(sys.argv) >= 5:
+        response = snap_http.set_conf(sys.argv[2],{sys.argv[3]: sys.argv[4],},)
+      else:
+        print('usage: set <snap> <key> <value>')
+    # unset a config option for a snap
+    if sys.argv[1] == 'unset':
+      if len(sys.argv) >= 4:
+        response = snap_http.set_conf(sys.argv[2],{sys.argv[3]: None,},)
+      else:
+        print('usage: unset <snap> <key>')
